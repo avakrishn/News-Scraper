@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body>
+
+	<header>
+		<% include ../partials/header %>
+	</header>
+
+	<main>
+        <div>
+            <h1>New York Times Article Scraper</h1>
+            <form>
+                <button class="section" id="top_stories">Top Stories</button>
+                <button class="section" id="world">World</button>
+                <button class="section" id="us">U.S.</button>
+                <button class="section" id="politics">Politics</button>
+                <button class="section" id="nyregion">New York</button>
+                <button class="section" id="business">Business</button>
+                <button class="section" id="technology">Technology</button>
+                <button class="section" id="science">Science</button>
+                <button class="section" id="sports">Sports</button>
+                <!-- <button class="section" id="random">Suprise Me!</button> -->
+            </form>
+        
+        </div>
+
+        <% if(typeof data != 'undefined'){ %>
+            <div>
+            <% data.forEach(function(element){ %>
+                <h2><%=element.title%></h2>
+
+            <% }) %>
+            </div>
+        <%} %>
+	</main>
+
+       
+    <% include ../partials/script %>
+</body>
+</html>
