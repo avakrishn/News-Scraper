@@ -48,7 +48,7 @@ app.use(express.static("app/public"));
 app.get('/:section', function(req, res) {
     // Find all results from the scrapedData collection in the db
     // find everything
-    db.newsArticles.find({section: req.params.section}, function(error, found) {
+    db.newsArticles.find({section: req.params.section}).sort({_id:-1}, function(error, found) {
       // data we get back is in found
       // Throw any errors to the console
       if (error) {
@@ -65,68 +65,68 @@ app.get('/:section', function(req, res) {
 app.post('/scrape/:section', function(req, res) {
 
     var requestURL = 'https://www.nytimes.com/';
-    var section = 'section/' +req.params.section;
-    if(req.params.section == 'top_stories'){
-        section =  '';
-    }
-    request(requestURL + section, function(error, response, html) {
+        filterSection =  'section/' + req.params.section;
+    // if(req.params.section != 'top'){
+    //     filterSection =  'section/' + req.params.section;
+    // }
+    request(requestURL + filterSection, function(error, response, html) {
         if(error) throw error;
 
   
-      var $ = cheerio.load(html);
+        var $ = cheerio.load(html);
     
 
-      $('article.story.theme-summary').each(function(i, element) {
-        // Save the text and href of each link enclosed in the current element
-        var title = $(element).children('.story-body').children('h2').children('a').text();
-  
-        var link = $(element).children('.story-body').children('h2').children('a').attr('href');
+        $('article.story.theme-summary').each(function(i, element) {
+            // Save the text and href of each link enclosed in the current element
+            var title = $(element).children('.story-body').children('h2').children('a').text();
+    
+            var link = $(element).children('.story-body').children('h2').children('a').attr('href');
 
-        var image = $(element).children('figure').children('a').children('img').attr('src');
+            var image = $(element).children('figure').children('a').children('img').attr('src');
 
-        var summary = $(element).children('.story-body').children('.summary').text();
+            var summary = $(element).children('.story-body').children('.summary').text();
 
-        // var published = $(element).children('.story-body').children('.byline').children('.freshness').children('time').text();
+            // var published = $(element).children('.story-body').children('.byline').children('.freshness').children('time').text();
 
-        var author = $(element).children('.story-body').children('.byline').children('.author').text();
-        
-
-        // If this found element had both a title and a link (false if empty strings ir undefined)
-        if (title && link && image && summary && author) {
-          // Insert the data in the scrapedData collection insert a new document
-          db.newsArticles.find({link: link}, {$exists: true}).toArray(function(err, doc){ //find if a value exists    
-            if(doc.length == 0){ //if it does not exist
-                db.newsArticles.insert({
-                    title: title,
-                    link: link,
-                    image: image,
-                    summary: summary,
-                    author: author, 
-                    section: req.params.section,
-                },
-                function(err, inserted) {
-                    if (err) {
-                    // Log the error if one is encountered during the query
-                    console.log(err);
-                    }
-                    else {
-                    // Otherwise, log the inserted data (successful)
+            var author = $(element).children('.story-body').children('.byline').children('.author').text();
             
-                    console.log(inserted);
-                        // console log the document that was inserted
-                    }
-                });
+
+            // If this found element had both a title and a link (false if empty strings ir undefined)
+            if (title && link && image && summary && author) {
+            // Insert the data in the scrapedData collection insert a new document
+            db.newsArticles.find({link: link}, {$exists: true}).toArray(function(err, doc){ //find if a value exists    
+                if(doc.length == 0){ //if it does not exist
+                    db.newsArticles.insert({
+                        title: title,
+                        link: link,
+                        image: image,
+                        summary: summary,
+                        author: author, 
+                        section: req.params.section,
+                    },
+                    function(err, inserted) {
+                        if (err) {
+                        // Log the error if one is encountered during the query
+                        console.log(err);
+                        }
+                        else {
+                        // Otherwise, log the inserted data (successful)
+                
+                        console.log(inserted);
+                            // console log the document that was inserted
+                        }
+                    });
+                }
+                else{
+                    console.log(`Doc already exists ${doc}`);
+                }
+                
+            });
             }
-            else{
-                console.log(`Doc already exists ${doc}`);
-            }
-              
-          });
-        }
-      });
+        });
+        res.redirect('/'+ req.params.section);
     });
   
-    res.redirect('/'+req.params.section);
   });
 
 
