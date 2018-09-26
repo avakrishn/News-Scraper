@@ -48,7 +48,7 @@ app.use(express.static("app/public"));
 app.get('/:section', function(req, res) {
     // Find all results from the scrapedData collection in the db
     // find everything
-    db.newsArticles.find({section: req.params.section}).sort({_id:-1}, function(error, found) {
+    db.newsArticles.find({section: req.params.section}).sort({timeUTC:-1}, function(error, found) {
       // data we get back is in found
       // Throw any errors to the console
       if (error) {
@@ -86,14 +86,16 @@ app.post('/scrape/:section', function(req, res) {
 
             var summary = $(element).children('.story-body').children('.summary').text();
 
-            // var published = $(element).children('.story-body').children('.byline').children('.freshness').children('time').text();
+            var published = $(element).children('.story-body').children('.byline').find('.freshness').find('time').attr('data-utc-timestamp');
 
             var author = $(element).children('.story-body').children('.byline').children('.author').text();
             
-
+            
+           
             // If this found element had both a title and a link (false if empty strings ir undefined)
-            if (title && link && image && summary && author) {
+            if (title && link && image && summary && author && published) {
             // Insert the data in the scrapedData collection insert a new document
+            var date = timeConverter(published);
             db.newsArticles.find({link: link}, {$exists: true}).toArray(function(err, doc){ //find if a value exists    
                 if(doc.length == 0){ //if it does not exist
                     db.newsArticles.insert({
@@ -103,6 +105,8 @@ app.post('/scrape/:section', function(req, res) {
                         summary: summary,
                         author: author, 
                         section: req.params.section,
+                        timeUTC: published,
+                        date: date
                     },
                     function(err, inserted) {
                         if (err) {
@@ -130,6 +134,17 @@ app.post('/scrape/:section', function(req, res) {
   });
 
 
+function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+
+    var time = date + ' ' + month + ' ' + year;
+    return time;
+}
+ 
 // Listen on port 3000
 app.listen(3000, function() {
     console.log("App running on port 3000!");
