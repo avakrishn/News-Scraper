@@ -10,10 +10,13 @@
 	</header>
 
 	<main>
-        <div>
-            <h1>New York Times Article Scraper</h1>
+        <div class="jumbotron text-center">
+            <h1>New York Times Top Stories</h1>
+            <h1>Mongo Scraper</h1>
+        </div>
+        <div class="mx-3 d-flex justify-content-center">
             <form>
-                <button class="section" id="top_stories">Top Stories</button>
+                <!-- <button class="section" id="top">Top Stories</button> -->
                 <button class="section" id="world">World</button>
                 <button class="section" id="us">U.S.</button>
                 <button class="section" id="politics">Politics</button>
@@ -28,11 +31,27 @@
         </div>
 
         <% if(typeof data != 'undefined'){ %>
-            <div>
+           <div class="container-fluid">
             <% data.forEach(function(element){ %>
-                <h2><%=element.title%></h2>
+                <div class="card mx-3 p-3 my-3">
+                    <div class="d-flex">
+                        <div class="col-3">
+                            <img src="<%=element.image%>" class="imageSize">
+                        </div>
+                        <div class="col-9">
+                            <h2><%=element.title%></h2>
+                            <p><%=element.summary%></p>
+                            <p><%=element.author%></p>
+                            <a href="<%=element.link%>">Read Full Article</a>
+                        </div>  
+                    </div>
+                </div>
 
             <% }) %>
+            </div>
+        <%} else {%>
+            <div class="text-center">
+                <h2>Looks Like There are No New Articles. Click A Button Above To Find New Articles.</h2>
             </div>
         <%} %>
 	</main>
