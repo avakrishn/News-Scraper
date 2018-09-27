@@ -3,6 +3,8 @@ var express = require("express");
   // routing
 var mongojs = require("mongojs");
   // connect to mongodb
+
+var ObjectId = require('mongojs').ObjectID;
 // Require request and cheerio. This makes the scraping possible
 var request = require("request");
   // make requests to get data/ html from another url
@@ -38,12 +40,42 @@ db.on("error", function(error) {
   console.log("Database Error:", error);
 });
 
-app.get('/', function(req,res){
-    res.render(__dirname + '/app/views/pages/index');
-})
-
 app.use(express.static("app/public"));
 
+app.get('/', function(req,res){
+    db.newsArticles.find({}).sort({timeUTC:-1}, function(error, found) {
+        // data we get back is in found
+        // Throw any errors to the console
+        if (error) {
+          console.log(error);
+        }
+        // If there are no errors, send the data to the browser as json
+        else if (found.length > 0) {
+          res.render(__dirname + '/app/views/pages/index', {data: found, title: "All Scraped"});
+        }
+        else{
+            res.render(__dirname + '/app/views/pages/index');
+        }
+      });
+})
+
+
+app.get('/saved', function(req, res) {
+    // Find all results from the scrapedData collection in the db
+    // find everything
+    db.newsArticles.find({starred: true}).sort({timeUTC:-1}, function(error, found) {
+      // data we get back is in found
+      console.log(found);
+      // Throw any errors to the console
+      if (error) {
+        console.log(error);
+      }
+      // If there are no errors, send the data to the browser as json
+      else {
+        res.render(__dirname + '/app/views/pages/index', {data: found, title: "Starred"});
+      }
+    });
+});
 
 app.get('/:section', function(req, res) {
     // Find all results from the scrapedData collection in the db
@@ -56,10 +88,13 @@ app.get('/:section', function(req, res) {
       }
       // If there are no errors, send the data to the browser as json
       else {
-        res.render(__dirname + '/app/views/pages/index', {data: found});
+        res.render(__dirname + '/app/views/pages/index', {data: found, title: req.params.section });
       }
     });
 });
+
+
+
 
 
 app.post('/scrape/:section', function(req, res) {
@@ -106,7 +141,8 @@ app.post('/scrape/:section', function(req, res) {
                         author: author, 
                         section: req.params.section,
                         timeUTC: published,
-                        date: date
+                        date: date,
+                        starred: false
                     },
                     function(err, inserted) {
                         if (err) {
@@ -132,6 +168,26 @@ app.post('/scrape/:section', function(req, res) {
     });
   
   });
+
+app.post('/add/star/:id', function(req, res) {
+    var id = req.params.id;
+    console.log(id);
+    db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: true}}, function(error, found){
+        res.redirect('back');
+    });
+    
+  
+});
+  
+app.post('/delete/star/:id', function(req, res) {
+    var id = req.params.id;
+    console.log(id);
+    db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: false}}, function(error, found) {
+        res.redirect('back');
+    });
+
+    
+});
 
 
 function timeConverter(UNIX_timestamp){
