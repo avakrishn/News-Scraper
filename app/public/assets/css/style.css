@@ -1,4 +1,26 @@
+h4{
+    font-size: 2.7rem;
+}
+h5{
+    font-size: 2.3rem;
+}
 .imageSize{
     max-width: 100%;
     height: auto;
 }
+
+.selected{
+    color: #17a2b8; 
+}
+
+.capitalize{
+    text-transform: capitalize;
+}
+
+.to-top{
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+}
+
+
