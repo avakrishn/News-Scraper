@@ -11,12 +11,12 @@
 
 	<main>
         <div class="jumbotron text-center">
-            <h1>New York Times Top Stories</h1>
-            <h1>Mongo Scraper</h1>
+            <h4>New York Times </h4> 
+            <h5>Mongo Scraper</h5>
         </div>
+        <h2 class="text-center">Click to Scrape:</h2>
         <div class="mx-3 d-flex justify-content-center">
             <form>
-                <!-- <button class="section" id="top">Top Stories</button> -->
                 <button class="section btn btn-success m-1" id="world">World</button>
                 <button class="section btn btn-success m-1" id="us">U.S.</button>
                 <button class="section btn btn-success m-1" id="politics">Politics</button>
@@ -27,25 +27,47 @@
                 <button class="section btn btn-success m-1" id="sports">Sports</button>
                 <!-- <button class="section" id="random">Suprise Me!</button> -->
             </form>
-
+        </div>
+        <div class="mx-3 d-flex justify-content-center">
             <form>
-                <button class="btn btn-danger m-1">Saved articles</button>
+                <button class=" btn btn-info m-1" id="all" >All Scraped Articles</button>
+                <button class="btn btn-info m-1" id="saved">Starred articles</button>
             </form>
-        
         </div>
 
         <% if(typeof data != 'undefined'){ %>
            <div class="container-fluid">
+                <% if(title == "us"){ %>
+                    <h1 class="text-center pt-2"> U.S. Articles</h1>
+                <%} else if(title == "nyregion"){%>
+                    <h1 class="text-center pt-2">New York Region Articles</h1>
+                <% } else { %>
+                    <h1 class="text-center pt-2"><span class="capitalize"><%=title%></span> Articles</h1>
+                <% } %>
             <% data.forEach(function(element){ %>
                 <div class="card m-3 py-3">
                     <div class="row d-flex justify-content-center">
-                        <div class="col-sm-3 pr-4">
+                        <div class="col-sm-3">
                             <img src="<%=element.image%>" class="imageSize">
                         </div>
-                        <div class="col-sm-8">
-                            <h2 class="border-bottom border-info pb-3"><%=element.title%></h2>
-                            <p><%=element.summary%></p>
-                            <p><%=element.author%> <span class=" ml-2 pl-2 border-left border-info"><%=element.date%></span></p>
+                        <div class="col-sm-8 px-4">
+                            <div class="row d-flex justify-content-between border-bottom border-info pb-2 m-0">
+                                <div class="col-sm-10 m-0 p-0">
+                                    <h3 class=""><%=element.title%></h3>
+                                </div>
+                                <div class="col-sm-1  m-0 p-0 ml-2">
+                                    <form action="">
+                                        <% if(element.starred){ %>
+                                            <i class="fas fa-star fa-2x star selected" id="<%=element._id%>"></i>
+                                        <% } else { %>
+                                            <i class="far fa-star fa-2x star" id="<%=element._id%>"></i>
+                                        <% } %>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                            <p class="pt-2"><%=element.summary%></p>
+                            <p><%=element.author%> <span class="pl-2 border-left border-info"><%=element.date%></span></p>
                             <a href="<%=element.link%>">Read Full Article</a>
                         </div>  
                     </div>
@@ -55,11 +77,11 @@
             </div>
         <%} else {%>
             <div class="text-center">
-                <h2>Looks Like There are No New Articles. Click A Button Above To Find New Articles.</h2>
+                <h1>Looks Like There are No New Articles. Click A Button Above To Find New Articles.</h1>
             </div>
         <%} %>
-        <div class="text-center">
-            <a class="btn btn-primary mb-3" href="javascript:window.location.href=window.location.href">To Top</a>
+        <div class="to-top">
+            <a class="btn btn-primary mb-3" href="javascript:window.location.href=window.location.href">Top</a>
         </div>
 	</main>
 
