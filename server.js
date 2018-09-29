@@ -169,22 +169,40 @@ app.post('/scrape/:section', function(req, res) {
   
   });
 
-app.post('/add/star/:id', function(req, res) {
+app.post('/add/:type/:id', function(req, res) {
     var id = req.params.id;
-    console.log(id);
-    db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: true}}, function(error, found){
-        res.redirect('back');
-    });
+    if(req.params.type == "star"){
+        console.log(id);
+        db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: true}}, function(error, found){
+            if (error) throw error;
+            res.redirect('back');
+        });
+    }else if(req.params.type == "note"){
+        db.newsArticles.update({ '_id': ObjectId(id) },{ $push: req.body}, function(error, found){
+            if (error) throw error;
+            res.redirect('back');
+        });
+    }
     
   
 });
   
-app.post('/delete/star/:id', function(req, res) {
+app.post('/delete/:type/:id', function(req, res) {
     var id = req.params.id;
-    console.log(id);
-    db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: false}}, function(error, found) {
-        res.redirect('back');
-    });
+    if(req.params.type == "star"){
+        console.log(id);
+        db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: false}}, function(error, found) {
+            if (error) throw error;
+            res.redirect('back');
+        });
+    }else if(req.params.type == "note"){
+        console.log(req.body);
+        db.newsArticles.update({ '_id': ObjectId(id) },{ $pull: req.body}, function(error, found){
+            console.log(found);
+            if (error) throw error;
+            res.redirect('back');
+        });
+    }
 
     
 });
