@@ -169,6 +169,18 @@ app.post('/scrape/:section', function(req, res) {
   
   });
 
+app.get('/note/:id', function(req, res){
+    db.newsArticles.find({ '_id': ObjectId(req.params.id) }, function(error, found) {
+        // data we get back is in found
+        // Throw any errors to the console
+        if (error) {
+          console.log(error);
+        }
+        // If there are no errors, send the data to the browser as json
+       res.json(found[0]);
+    });
+})
+
 app.post('/add/:type/:id', function(req, res) {
     var id = req.params.id;
     if(req.params.type == "star"){
