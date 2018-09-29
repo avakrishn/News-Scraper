@@ -53,6 +53,43 @@ $(document).ready(function(){
         });
         $(this).parent().submit();
 
-    })
+    });
+
+    $('.saveNote').on('click', function(){
+        event.preventDefault();
+        var newNote = $('.newNote').val().trim();
+        if(newNote != ""){
+            $.ajax({
+                method: "POST",
+                url: "/add/note/" + $(this).attr("id"),
+                data: { notes: newNote },
+                success: function(){
+                    console.log('success');
+                    location.reload();
+                },
+                error: function(){
+                    console.log('failure');
+                }
+            });
+        }
+    });
+
+    $('.deleteNote').on('click', function(){
+        event.preventDefault();
+        console.log($(this).attr("id"));
+        var newNote = $(this).attr("data-note");
+        $.ajax({
+            method: "POST",
+            url: "/delete/note/" + $(this).attr("id"),
+            data: { notes: newNote },
+            success: function(){
+                console.log('success');
+                // location.reload();
+            },
+            error: function(){
+                console.log('failure');
+            }
+        });
+});
 
 });
