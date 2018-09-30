@@ -10,28 +10,30 @@
 	</header>
 
 	<main>
-        <div class="jumbotron text-center">
+        <div class="jumbotron text-center pb-5">
             <h4>New York Times </h4> 
             <h5>Mongo Scraper</h5>
-        </div>
-        <h2 class="text-center">Click to Scrape:</h2>
-        <div class="mx-3 d-flex justify-content-center">
-            <form>
-                <button class="section btn btn-success m-1" id="world">World</button>
-                <button class="section btn btn-success m-1" id="us">U.S.</button>
-                <button class="section btn btn-success m-1" id="politics">Politics</button>
-                <button class="section btn btn-success m-1" id="nyregion">New York</button>
-                <button class="section btn btn-success m-1" id="business">Business</button>
-                <button class="section btn btn-success m-1" id="technology">Technology</button>
-                <button class="section btn btn-success m-1" id="science">Science</button>
-                <button class="section btn btn-success m-1" id="sports">Sports</button>
-            </form>
-        </div>
-        <div class="mx-3 d-flex justify-content-center">
-            <form>
-                <button class="btn btn-info m-1" id="all" >All Scraped Articles</button>
-                <button class="btn btn-info m-1" id="saved">Starred articles</button>
-            </form>
+            <div class ="w3-card p-3 menu mt-3">
+                <h2 class="text-center menuTitle">Click to Scrape:</h2>
+                <div class="mx-3 d-flex justify-content-center">
+                    <form>
+                        <button class="section btn btn-success m-1" id="world">World</button>
+                        <button class="section btn btn-success m-1" id="us">U.S.</button>
+                        <button class="section btn btn-success m-1" id="politics">Politics</button>
+                        <button class="section btn btn-success m-1" id="nyregion">New York</button>
+                        <button class="section btn btn-success m-1" id="business">Business</button>
+                        <button class="section btn btn-success m-1" id="technology">Technology</button>
+                        <button class="section btn btn-success m-1" id="science">Science</button>
+                        <button class="section btn btn-success m-1" id="sports">Sports</button>
+                    </form>
+                </div>
+                <div class="mx-3 d-flex justify-content-center">
+                    <form>
+                        <button class="btn btn-info m-1" id="all" >Latest 50 Scraped Articles</button>
+                        <button class="btn btn-info m-1" id="starred">My Starred Articles</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <% if(typeof data != 'undefined' && data.length > 0){ %>
@@ -43,8 +45,8 @@
                 <% } else { %>
                     <h1 class="text-center pt-2"><span class="capitalize"><%=title%></span> Articles</h1>
                 <% } %>
-            <% data.forEach(function(element){ %>
-                <div class="card m-3 py-3">
+            <% data.slice(0,50).forEach(function(element){ %>
+                <div class="w3-card m-3 py-3">
                     <div class="row d-flex justify-content-center">
                         <div class="col-sm-3">
                             <img src="<%=element.image%>" class="imageSize">
@@ -66,46 +68,15 @@
                                 </div>
                             </div>
                             <p class="pt-2"><%=element.summary%></p>
-                            <p><%=element.author%> <span class="pl-2 border-left border-info"><%=element.date%></span></p>
+                            <div class="lowercase">
+                                <p class="capitalize"><%=element.author%> <span class="pl-2 border-left border-info"><%=element.date%></span></p>
+                            </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="<%=element.link%>">Read Full Article</a>
-                                <% if(title == "Starred"){%>
-                                    <button type="button" class="btn btn-info m-1 notes" id="<%=element._id%>" data-toggle="modal" data-target="#notesModal">Article Notes</button>
-                                <%}%>
+                                <a href="<%=element.link%>" target="_blank">Read Full Article</a>
+                                
+                                <button type="button" class="btn btn-info m-1 notes" id="<%=element._id%>" data-toggle="modal" data-target="#notesModal">Article Notes</button>
+                                
                             </div>
-                            <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h6 class="modal-title" id="<%=element.title%>">Notes for Article: <br> <%=element.title%></h6>
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                    </div>
-                                    <div class="modal-body text-center">
-                                        <% if(typeof element.notes != 'undefined' && element.notes.length > 0){ %>
-                                            <% element.notes.forEach(function(note){ %>
-                                                <div class="card m-3 p-3 d-flex flex-row justify-content-between">
-                                                    <p><%=note%></p>
-                                                    <span><button class="deleteNote" id="<%=element._id%>" data-note="<%=note%>">X</button></span>
-                                                </div>
-                                            <% }) %>
-
-                                        <%} else{ %>
-                                            <div class="card m-3 py-3 text-center">
-                                                <p>No notes for this article yet.</p>
-                                            </div>
-                                        <% } %>
-                                        <textarea class="newNote" rows="5" cols="50" name="notes"></textarea>
-
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-info saveNote" id="<%=element._id%>">Save Note</button>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-
                         </div>  
                     </div>
                 </div>
@@ -124,6 +95,39 @@
                 <h3>Looks Like There are No New Articles. Click A Green Button Above To Find New Articles.</h3>
             </div>
         <%} %>
+
+        <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"></h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="noteContent">
+
+                    </div>
+                    
+                    <% if(title == "Starred"){ %>
+                        <textarea class="newNote" rows="5" cols="50" name="notes" placeholder="Enter your note here"></textarea>
+                    <%} else {%>
+                        <h6 class="text-left">Add Notes to this Article in your Starred Article Page.</h6>
+                    <%}%>
+
+                </div>
+                <div class="modal-footer">
+                    <% if(title == "Starred"){ %>
+                        <button type="button" class="btn btn-info saveNote" >Save Note</button>
+                    <%} else {%>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <%}%>
+                </div>
+                </div>
+            </div>
+        </div>
+
         <div class="to-top">
             <a class="btn btn-primary mb-3" href="javascript:window.location.href=window.location.href">Top</a>
         </div>
