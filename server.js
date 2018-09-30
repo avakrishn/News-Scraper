@@ -60,7 +60,7 @@ app.get('/', function(req,res){
 })
 
 
-app.get('/saved', function(req, res) {
+app.get('/starred', function(req, res) {
     // Find all results from the scrapedData collection in the db
     // find everything
     db.newsArticles.find({starred: true}).sort({timeUTC:-1}, function(error, found) {
@@ -80,17 +80,23 @@ app.get('/saved', function(req, res) {
 app.get('/:section', function(req, res) {
     // Find all results from the scrapedData collection in the db
     // find everything
-    db.newsArticles.find({section: req.params.section}).sort({timeUTC:-1}, function(error, found) {
-      // data we get back is in found
-      // Throw any errors to the console
-      if (error) {
-        console.log(error);
-      }
-      // If there are no errors, send the data to the browser as json
-      else {
-        res.render(__dirname + '/app/views/pages/index', {data: found, title: req.params.section });
-      }
-    });
+    var possibleSections = ["world", "us", "politics", "nyregion", "business", "technology", "science", "sports"];
+    if(possibleSections.indexOf(req.params.section) != -1){
+        db.newsArticles.find({section: req.params.section}).sort({timeUTC:-1}, function(error, found) {
+            // data we get back is in found
+            // Throw any errors to the console
+            if (error) {
+              console.log(error);
+            }
+            // If there are no errors, send the data to the browser as json
+            else {
+              res.render(__dirname + '/app/views/pages/index', {data: found, title: req.params.section });
+            }
+          });
+    }else{
+        res.redirect('/');
+    }
+    
 });
 
 
@@ -188,11 +194,14 @@ app.post('/add/:type/:id', function(req, res) {
         db.newsArticles.update({ '_id': ObjectId(id) },{ $set:{starred: true}}, function(error, found){
             if (error) throw error;
             res.redirect('back');
+            // res.end();
         });
     }else if(req.params.type == "note"){
         db.newsArticles.update({ '_id': ObjectId(id) },{ $push: req.body}, function(error, found){
             if (error) throw error;
-            res.redirect('back');
+            // res.redirect('back');
+            res.end();
+            
         });
     }
     
