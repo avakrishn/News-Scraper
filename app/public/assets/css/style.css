@@ -1,23 +1,53 @@
+body{
+    background-color: #f8f8f8;
+    
+}
+.jumbotron{
+    background-color: #17a2b8;
+    color: white;
+}
+
+.menu{
+    display: inline-block;
+    margin: 0 auto;
+    border-radius: 15px;
+}
+
+.w3-card{
+    background-color: #f8f8fa;
+}
+
+.menuTitle{
+    color: black;
+}
+
 h4{
-    font-size: 2.7rem;
+    font-size: 3rem;
 }
+
 h5{
-    font-size: 2.3rem;
+    font-size: 2.6rem;
 }
+
 h6{
     font-size: 1.5rem;
 }
+
 .imageSize{
     max-width: 100%;
     height: auto;
 }
 
-.selected{
-    color: #17a2b8; 
+.lowercase{
+    text-transform: lowercase;
 }
 
 .capitalize{
     text-transform: capitalize;
+}
+
+.selected{
+    color: #17a2b8; 
 }
 
 .to-top{
@@ -25,6 +55,10 @@ h6{
     bottom: 0;
     right: 10px;
 }
+
+
+
+
 
 
 
